@@ -12,7 +12,7 @@ const formElement = document.querySelector(".to-do__form");
 const inputElement = document.querySelector(".to-do__input");
 
 function loadTasks() {
-	const storedTasks  = JSON.parse(localStorage.getItem('tasks'));
+	const storedTasks = JSON.parse(localStorage.getItem('tasks'));
 	if (storedTasks ) {
 		return storedTasks ;
 	}
@@ -45,6 +45,17 @@ function createItem(item) {
 		saveTasks(items);
 	})
 
+	editButton.addEventListener('click', () => {
+		textElement.contentEditable = true;
+		textElement.focus();
+	})
+
+	textElement.addEventListener('blur', () => {
+		textElement.contentEditable = false;
+		const items = getTasksFromDOM();
+		saveTasks(items);
+	})
+
 	return clone;
 }
 
@@ -65,8 +76,8 @@ function saveTasks(tasks) {
 
 formElement.addEventListener('submit', function(evt) {
 	evt.preventDefault(); /*Убираем перезагрзку страницы при отправке формы*/
-	const input_text = inputElement.value;
-	const taskElement = createItem(input_text); 
+	const inputText = inputElement.value;
+	const taskElement = createItem(inputText); 
 	listElement.prepend(taskElement);
 	items = getTasksFromDOM();
 	saveTasks(items);
