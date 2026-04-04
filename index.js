@@ -12,9 +12,9 @@ const formElement = document.querySelector(".to-do__form");
 const inputElement = document.querySelector(".to-do__input");
 
 function loadTasks() {
-	const storedTasks = JSON.parse(localStorage.getItem('tasks'));
+	const storedTasks = localStorage.getItem('tasks');
 	if (storedTasks ) {
-		return storedTasks ;
+		return JSON.parse(storedTasks);
 	}
 	else {
 		return items;
@@ -33,7 +33,7 @@ function createItem(item) {
 
 	deleteButton.addEventListener('click', () => {
 		clone.remove();
-		const items = getTasksFromDOM();
+		items = getTasksFromDOM();
 		saveTasks(items)
 	})
 
@@ -41,7 +41,7 @@ function createItem(item) {
 		const itemName = textElement.textContent;
 		const newItem = createItem(itemName);
 		listElement.prepend(newItem);
-		const items = getTasksFromDOM();
+		items = getTasksFromDOM();
 		saveTasks(items);
 	})
 
@@ -52,8 +52,15 @@ function createItem(item) {
 
 	textElement.addEventListener('blur', () => {
 		textElement.contentEditable = false;
-		const items = getTasksFromDOM();
+		items = getTasksFromDOM();
 		saveTasks(items);
+	})
+
+	textElement.addEventListener('keydown', (evt) => {
+    	if (evt.key === 'Enter') {
+        	evt.preventDefault();
+        	textElement.blur();
+    	}
 	})
 
 	return clone;
@@ -76,7 +83,12 @@ function saveTasks(tasks) {
 
 formElement.addEventListener('submit', function(evt) {
 	evt.preventDefault(); /*Убираем перезагрзку страницы при отправке формы*/
-	const inputText = inputElement.value;
+	const inputText = inputElement.value.trim(); /*Убираем пробелы в начале и конце строки*/
+
+	if (inputText === '') { 
+        return;
+    }
+
 	const taskElement = createItem(inputText); 
 	listElement.prepend(taskElement);
 	items = getTasksFromDOM();
